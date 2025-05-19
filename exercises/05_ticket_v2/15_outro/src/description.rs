@@ -2,7 +2,60 @@
 //   enforcing that the description is not empty and is not longer than 500 bytes.
 //   Implement the traits required to make the tests pass too.
 
+use std::fmt::Display;
+
+#[derive(Debug, Clone)]
 pub struct TicketDescription(String);
+
+//Error structure
+#[derive(Debug)]
+struct ParseDescriptionError{
+    invalid_status: String,
+}
+
+impl Display for ParseDescriptionError{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self)
+    }
+}
+
+//Implemented the TryFrom for String
+impl TryFrom<String> for TicketDescription{
+    
+    type Error = ParseDescriptionError;
+    
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+           
+           if value.len() > 500{
+                return Err(ParseDescriptionError { invalid_status: "The description cannot be longer than 500 bytes".to_string()})
+           }
+
+           if value.len() == 0{
+                return Err(ParseDescriptionError { invalid_status: "The description cannot be empty".to_string()})
+           }
+
+           Ok(TicketDescription(value))
+    }
+}
+
+//Implemented the TryFrom for &str
+impl TryFrom<&str> for TicketDescription{
+    
+    type Error = ParseDescriptionError;
+    
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+           
+           if value.len() > 500{
+                return Err(ParseDescriptionError { invalid_status: "The description cannot be longer than 500 bytes".to_string()})
+           }
+
+           if value.len() == 0{
+                return Err(ParseDescriptionError { invalid_status: "The description cannot be empty".to_string()})
+           }
+
+           Ok(TicketDescription(value.to_string()))
+    }
+}
 
 #[cfg(test)]
 mod tests {
